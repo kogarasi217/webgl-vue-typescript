@@ -1,5 +1,5 @@
 <template>
-  <canvas ref="canvas" id="canvas" width="600" height="400" />
+  <canvas ref="canvas" id="canvas" :width="WIDTH" :height="HEIGHT" />
 </template>
 
 <script lang="ts">
@@ -23,13 +23,17 @@ export default class RotateBoxComp extends Vue {
   // Private Property
   // =========================================
 
+  private WIDTH = 600;
+  private HEIGHT = 400;
+
   private scene = new THREE.Scene();
   private renderer: THREE.WebGLRenderer | null = null;
-  private camera = new THREE.PerspectiveCamera(75, 600 / 400, 0.1, 1000);
+  private camera = new THREE.PerspectiveCamera(45, this.WIDTH / this.HEIGHT, 1, 10000);
   private light = new THREE.DirectionalLight(0xffffff);
-  private geometry = new THREE.BoxGeometry(1, 1, 1);
-  private material = new THREE.MeshNormalMaterial();
-  private cube = new THREE.Mesh(this.geometry, this.material);
+  private geometry = new THREE.SphereGeometry(300, 30, 30);
+  private material = new THREE.MeshStandardMaterial({color: 0xFF0000});
+  private mesh = new THREE.Mesh(this.geometry, this.material);
+  // private cube = new THREE.Mesh(this.geometry, this.material);
 
   // =========================================
   // Constructor
@@ -50,9 +54,9 @@ export default class RotateBoxComp extends Vue {
       canvas: $canvas,
     });
 
-    this.camera.position.set(0, 0, 2);
-    this.light.position.set(0, 0, 10);
-    this.scene.add(this.cube);
+    this.camera.position.set(0, 0, 1000);
+    this.light.position.set(1, 1, 1);
+    this.scene.add(this.mesh);
     this.scene.add(this.light);
 
     this.animate();
@@ -64,8 +68,8 @@ export default class RotateBoxComp extends Vue {
 
   private animate() {
     requestAnimationFrame(this.animate);
-    this.cube.rotation.x += this.speedX;
-    this.cube.rotation.y += this.speedY;
+    this.mesh.rotation.x += this.speedX;
+    this.mesh.rotation.y += this.speedY;
     this.renderer!.render(this.scene, this.camera);
   }
 }
