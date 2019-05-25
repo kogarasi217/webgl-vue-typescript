@@ -5,19 +5,10 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 @Component
 export default class RotateBoxComp extends Vue {
-
-  // =========================================
-  // Props
-  // =========================================
-
-  @Prop({default: 0.02})
-  public speedX!: number;
-
-  @Prop({default: 0.02})
-  public speedY!: number;
 
   // =========================================
   // Private Property
@@ -31,12 +22,11 @@ export default class RotateBoxComp extends Vue {
   private camera = new THREE.PerspectiveCamera(45, this.WIDTH / this.HEIGHT, 1, 10000);
   private light = new THREE.DirectionalLight(0xffffff);
   private geometry = new THREE.SphereGeometry(300, 30, 30);
+  private controls = new OrbitControls(this.camera);
   private loader = new THREE.TextureLoader();
   private texture = this.loader.load('/earthmap1k.jpg');
-  // private material = new THREE.MeshStandardMaterial({color: 0xFF0000});
   private material = new THREE.MeshStandardMaterial({map: this.texture});
   private mesh = new THREE.Mesh(this.geometry, this.material);
-  // private cube = new THREE.Mesh(this.geometry, this.material);
 
   // =========================================
   // Constructor
@@ -57,10 +47,15 @@ export default class RotateBoxComp extends Vue {
       canvas: $canvas,
     });
 
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.2;
+
     this.camera.position.set(0, 0, +1000);
     this.light.position.set(1, 1, 1);
     this.scene.add(this.mesh);
     this.scene.add(this.light);
+
+    this.createStarField();
 
     this.animate();
   }
@@ -71,9 +66,34 @@ export default class RotateBoxComp extends Vue {
 
   private animate() {
     requestAnimationFrame(this.animate);
-    this.mesh.rotation.x += this.speedX;
-    this.mesh.rotation.y += this.speedY;
+    this.mesh.rotation.y += 0.001;
+    this.mesh.rotation.x += 0.001;
+    this.controls.update();
     this.renderer!.render(this.scene, this.camera);
+  }
+
+  private createStarField() {
+    const geometry = new THREE.Geometry();
+    const numParticles = 1000;
+    const SIZE = 3000;
+    for(let i=0; i<numParticles; i++) {
+      geometry.vertices.push(
+        new THREE.Vector3(
+          SIZE * (Math.random() - 0.5),
+          SIZE * (Math.random() - 0.5),
+          SIZE * (Math.random() - 0.5)
+        )
+      );
+    }
+
+    const material = new THREE.PointsMaterial({
+      size: 5,
+      color: 0xffffff
+    });
+
+    const mesh = new THREE.Points(geometry, material);
+    this.scene.add(mesh);
+
   }
 }
 </script>

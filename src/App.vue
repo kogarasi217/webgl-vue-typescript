@@ -2,7 +2,8 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Rotate Cube</router-link> |
-      <router-link to="/sphere">Sphere</router-link>
+      <router-link to="/sphere">Sphere</router-link> |
+      <router-link to="/dragging-sphere">Dragging Sphere</router-link>
     </div>
     <router-view/>
   </div>
