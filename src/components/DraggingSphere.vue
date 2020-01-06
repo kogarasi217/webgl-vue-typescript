@@ -14,19 +14,19 @@ export default class RotateBoxComp extends Vue {
   // Private Property
   // =========================================
 
-  private WIDTH = 960;
-  private HEIGHT = 540;
+  private readonly WIDTH: number;
+  private readonly HEIGHT: number;
 
-  private scene = new THREE.Scene();
-  private renderer: THREE.WebGLRenderer | null = null;
-  private camera = new THREE.PerspectiveCamera(45, this.WIDTH / this.HEIGHT, 1, 10000);
-  private light = new THREE.DirectionalLight(0xffffff);
-  private geometry = new THREE.SphereGeometry(300, 30, 30);
-  private controls = new OrbitControls(this.camera);
-  private loader = new THREE.TextureLoader();
-  private texture = this.loader.load('/earthmap1k.jpg');
-  private material = new THREE.MeshStandardMaterial({map: this.texture});
-  private mesh = new THREE.Mesh(this.geometry, this.material);
+  private scene: THREE.Scene;
+  private renderer: THREE.WebGLRenderer | null;
+  private camera: THREE.PerspectiveCamera;
+  private light: THREE.DirectionalLight;
+  private geometry: THREE.SphereGeometry;
+  private controls!: OrbitControls;
+  private loader: THREE.TextureLoader;
+  private texture: THREE.Texture;
+  private material: THREE.MeshStandardMaterial;
+  private mesh: THREE.Mesh;
 
   // =========================================
   // Constructor
@@ -34,6 +34,19 @@ export default class RotateBoxComp extends Vue {
 
   constructor() {
     super();
+
+    this.WIDTH = 960;
+    this.HEIGHT = 540;
+
+    this.scene = new THREE.Scene();
+    this.renderer = null;
+    this.camera = new THREE.PerspectiveCamera(45, this.WIDTH / this.HEIGHT, 1, 10000);
+    this.light = new THREE.DirectionalLight(0xffffff);
+    this.geometry = new THREE.SphereGeometry(300, 30, 30);
+    this.loader = new THREE.TextureLoader();
+    this.texture = this.loader.load('/earthmap1k.jpg');
+    this.material = new THREE.MeshStandardMaterial({ map: this.texture });
+    this.mesh = new THREE.Mesh(this.geometry, this.material);
   }
 
   // =========================================
@@ -47,13 +60,12 @@ export default class RotateBoxComp extends Vue {
       canvas: $canvas,
     });
 
-    this.controls.enableDamping = true;
-    this.controls.dampingFactor = 0.2;
-
-    this.camera.position.set(0, 0, +1000);
+    this.camera.position.set(0, 0, 1000);
     this.light.position.set(1, 1, 1);
     this.scene.add(this.mesh);
     this.scene.add(this.light);
+
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
     this.createStarField();
 
@@ -93,7 +105,6 @@ export default class RotateBoxComp extends Vue {
 
     const mesh = new THREE.Points(geometry, material);
     this.scene.add(mesh);
-
   }
 }
 </script>
