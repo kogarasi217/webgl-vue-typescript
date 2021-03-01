@@ -19,7 +19,7 @@
     "@vue/cli-service": "^4.1.2",
     "node-sass": "^4.10.0",
     "sass-loader": "^8.0.0",
-    "three": "^0.112.1",
+    "three": "^0.125.0",
     "typescript": "^3.7.4",
     "vue-template-compiler": "^2.6.11"
   },
